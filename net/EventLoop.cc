@@ -1,9 +1,10 @@
-#include "EventLoop.h"
+#include "net/EventLoop.h"
+#include "net/Channel.h"
+#include "net/Poller.h"
 
 #include <glog/logging.h>
 
 #include <chrono>
-
 #include <assert.h>
 
 using namespace reactor;
@@ -11,6 +12,8 @@ using namespace reactor;
 using namespace reactor::net;
 
 thread_local EventLoop* t_loopInThisThread = nullptr;
+
+const int kPollTimeMs = 10000;
 
 EventLoop::EventLoop()
   : threadId_(tid())
@@ -35,11 +38,25 @@ void EventLoop::loop()
   assert(!looping_.load(std::memory_order_relaxed));
   assertInLoopThread();
   looping_.store(true, std::memory_order_relaxed);
+  quit_.store(false, std::memory_order_relaxed);
 
-  std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+  while (!quit_.load(std::memory_order_relaxed)) {
+    activeChannels_.clear();
+    poller_->poll(kPollTimeMs, &activeChannels_);
+    for (auto it = activeChannels_.begin(); it != activeChannels_.end(); it++) {
+      (*it)->handleEvent();
+    }
+  }
 
   LOG(INFO) << "EventLoop " << this << " stop looping";
   looping_.store(false, std::memory_order_relaxed);
+}
+
+void EventLoop::updateChannel(Channel* channel)
+{
+  assert(channel->ownerLoop() == this);
+  assertInLoopThread();
+  poller_->updateChannel(channel);
 }
 
 EventLoop* EventLoop::getEventLoopOfCurrentThread()
@@ -54,3 +71,7 @@ void EventLoop::abortNotInLoopThread()
              << ", current thread id = " <<  tid();
 }
 
+void EventLoop::quit()
+{
+  quit_.store(true, std::memory_order_relaxed);
+}
