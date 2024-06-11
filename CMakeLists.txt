@@ -32,10 +32,4 @@ include_directories(${PROJECT_SOURCE_DIR})
 
 add_subdirectory(base)
 add_subdirectory(net)
-
-add_executable(reactor reactor.cc)
-target_link_libraries(reactor
-  ${GLOG_LIBRARY}
-  reactor_net
-  reactor_base
-)
+add_subdirectory(test)
