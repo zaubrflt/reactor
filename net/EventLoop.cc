@@ -16,7 +16,8 @@ thread_local EventLoop* t_loopInThisThread = nullptr;
 const int kPollTimeMs = 10000;
 
 EventLoop::EventLoop()
-  : threadId_(tid())
+  : threadId_(tid()),
+    poller_(new Poller(this))
 {
   LOG(INFO) << "EventLoop created " << this << " in thread " << threadId_;
   if (t_loopInThisThread) {

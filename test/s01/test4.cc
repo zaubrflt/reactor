@@ -18,6 +18,10 @@ void timeout()
 
 int main(int argc, char const *argv[])
 {
+  google::InitGoogleLogging(argv[0]);
+
+  LOG(INFO) << "main(): pid = " << getpid() << ", tid = " << reactor::tid();
+
   reactor::net::EventLoop loop;
   g_loop = &loop;
 

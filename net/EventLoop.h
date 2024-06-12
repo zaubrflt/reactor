@@ -51,7 +51,7 @@ private:
 
   std::thread::id threadId_;
 
-  std::unique_ptr<Poller> poller_{nullptr};
+  std::unique_ptr<Poller> poller_;
 
   ChannelList activeChannels_;
 };
