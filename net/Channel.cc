@@ -4,8 +4,9 @@
 #include <glog/logging.h>
 #include <poll.h>
 
-using namespace reactor;
-using namespace reactor::net;
+namespace reactor {
+
+namespace net {
 
 const int Channel::kNoneEvent = 0;
 const int Channel::kReadEvent = POLLIN | POLLPRI;
@@ -38,3 +39,7 @@ void Channel::update()
 {
   loop_->updateChannel(this);
 }
+
+}  // namespace net
+
+}  // namespace reactor

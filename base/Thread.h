@@ -7,7 +7,6 @@ namespace reactor {
 
 std::thread::id tid();
 
-}
+}  // namespace reactor
 
-#endif
-
+#endif  // REACTOR_BASE_THREAD_H

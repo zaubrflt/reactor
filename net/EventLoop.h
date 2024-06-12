@@ -56,9 +56,9 @@ private:
   ChannelList activeChannels_;
 };
 
-}
+}  // namespace net
 
-}
+}  // namespace reactor
 
-#endif
+#endif  // REACTOR_NET_EVENTLOOP_H
 

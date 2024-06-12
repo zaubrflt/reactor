@@ -7,9 +7,9 @@
 #include <chrono>
 #include <assert.h>
 
-using namespace reactor;
+namespace reactor {
 
-using namespace reactor::net;
+namespace net {
 
 thread_local EventLoop* t_loopInThisThread = nullptr;
 
@@ -76,3 +76,7 @@ void EventLoop::quit()
 {
   quit_.store(true, std::memory_order_relaxed);
 }
+
+}  // namespace net
+
+}  // namespace reactor

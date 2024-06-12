@@ -1,4 +1,5 @@
-#pragma once
+#ifndef REACTOR_NET_CHANNEL_H
+#define REACTOR_NET_CHANNEL_H
 
 #include "base/noncopyable.h"
 
@@ -84,6 +85,8 @@ private:
   EventCallback errorCallback_;
 };
 
-}
+}  // namespace net
 
-}
+}  // namespace reactor
+
+#endif  // REACTOR_NET_CHANNEL_H

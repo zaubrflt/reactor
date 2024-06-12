@@ -6,10 +6,10 @@
 #include <glog/logging.h>
 #include <poll.h>
 #include <assert.h>
-#include "Poller.h"
 
-using namespace reactor;
-using namespace reactor::net;
+namespace reactor {
+
+namespace net {
 
 Poller::Poller(EventLoop *loop)
   : ownerLoop_(loop)
@@ -96,3 +96,7 @@ void Poller::fillActiveChannels(int numEvents,
     }
   }
 }
+
+}  // namespace net
+
+}  // namespace reactor

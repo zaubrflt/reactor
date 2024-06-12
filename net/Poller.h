@@ -1,4 +1,5 @@
-#pragma once
+#ifndef REACTOR_NET_POLLER_H
+#define REACTOR_NET_POLLER_H
 
 #include "base/noncopyable.h"
 #include "base/Time.h"
@@ -53,6 +54,8 @@ private:
   ChannelMap channels_;
 };
 
-}
+}  // namespace net
 
-}
+}  // namespace reactor
+
+#endif  // REACTOR_NET_POLLER_H
