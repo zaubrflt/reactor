@@ -62,7 +62,7 @@ private:
   static const int kNoneEvent;
 
   static const int kReadEvent;
-  
+
   static const int kWriteEvent;
 
   EventLoop* loop_{nullptr};

@@ -1,6 +1,7 @@
 #include "net/EventLoop.h"
 #include "net/Channel.h"
 #include "net/Poller.h"
+#include "net/TimerQueue.h"
 
 #include <glog/logging.h>
 
@@ -17,7 +18,8 @@ const int kPollTimeMs = 10000;
 
 EventLoop::EventLoop()
   : threadId_(tid()),
-    poller_(new Poller(this))
+    poller_(new Poller(this)),
+    timerQueue_(new TimerQueue(this))
 {
   LOG(INFO) << "EventLoop created " << this << " in thread " << threadId_;
   if (t_loopInThisThread) {
@@ -75,6 +77,23 @@ void EventLoop::abortNotInLoopThread()
 void EventLoop::quit()
 {
   quit_.store(true, std::memory_order_relaxed);
+}
+
+TimerId EventLoop::runAt(Timestamp time, TimerCallback cb)
+{
+  return timerQueue_->addTimer(std::move(cb), time, 0);
+}
+
+TimerId EventLoop::runAfter(int64_t delay, TimerCallback cb)
+{
+  Timestamp time(addTime(Clock::now(), delay));
+  return runAt(time, std::move(cb));
+}
+
+TimerId EventLoop::runEvery(int64_t interval, TimerCallback cb)
+{
+  Timestamp time(addTime(Clock::now(), interval));
+  return timerQueue_->addTimer(std::move(cb), time, interval);
 }
 
 }  // namespace net
