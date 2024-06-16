@@ -22,6 +22,8 @@ class TimerQueue;
 
 class EventLoop : public noncopyable {
 public:
+  typedef std::function<void()> Functor;
+
   EventLoop();
 
   ~EventLoop();
@@ -55,9 +57,22 @@ public:
   // Safe to call from other threads.
   TimerId runEvery(int64_t interval, TimerCallback cb);
 
+  // 在其IO线程内执行某个用户任务回调. 如果用户在当前IO线程调用这个函数, 回调会同步进行;
+  // 如果用户在其他线程调用runInLoop(), cb会被加入队列, IO线程会被唤醒来调用这个Functor.
+  void runInLoop(const Functor& cb);
+
+  void queueInLoop(const Functor& cb);
+
 private:
 
   void abortNotInLoopThread();
+
+  // waked up
+  void handleRead();
+
+  void doPendingFunctors();
+
+  void wakeup();
 
   typedef std::vector<Channel*> ChannelList;
 
@@ -65,13 +80,24 @@ private:
 
   std::atomic<bool> quit_{false};
 
+  std::atomic<bool> callingPendingFunctors_;
+
   std::thread::id threadId_;
 
   std::unique_ptr<Poller> poller_;
 
   std::unique_ptr<TimerQueue> timerQueue_;
 
+  int wakeupFd_;
+
+  // 处理wakeupFd_上的readable事件, 将事件分发至handleRead()函数
+  std::unique_ptr<Channel> wakeupChannel_;
+
   ChannelList activeChannels_;
+
+  std::mutex mutex_;
+
+  std::vector<Functor> pendingFunctors_;
 };
 
 }  // namespace net
