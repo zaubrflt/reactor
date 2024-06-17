@@ -34,6 +34,8 @@ private:
 
   typedef std::set<Entry> TimerList;
 
+  void addTimerInLoop(Timer* timer);
+
   // called when timerfd alarms
   void handleRead();
 

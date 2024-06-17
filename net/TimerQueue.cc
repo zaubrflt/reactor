@@ -83,12 +83,17 @@ TimerId TimerQueue::addTimer(const TimerCallback& cb,
 {
   // auto timer = std::make_shared<Timer>(cb, when, interval);
   Timer* timer = new Timer(cb, when, interval);
+  loop_->runInLoop(std::bind(&TimerQueue::addTimerInLoop, this, timer));
+  return TimerId(timer);
+}
+
+void TimerQueue::addTimerInLoop(Timer* timer)
+{
   loop_->assertInLoopThread();
   bool earliestChanged = insert(timer);
   if (earliestChanged) {
     resetTimerfd(timerfd_, timer->expiration());
   }
-  return TimerId(timer);
 }
 
 void TimerQueue::handleRead()
