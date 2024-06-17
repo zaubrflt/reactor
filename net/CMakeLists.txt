@@ -3,6 +3,7 @@ set(net_SRCS
   Channel.cc
   Poller.cc
   TimerQueue.cc
+  EventLoopThread.cc
 )
 
 set(HEADERS
@@ -12,6 +13,7 @@ set(HEADERS
   TimerId.h
   TimerQueue.h
   Callbacks.h
+  EventLoopThread.h
 )
 
 add_library(reactor_net ${net_SRCS})
