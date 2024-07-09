@@ -9,7 +9,7 @@ void threadFunc()
 {
   LOG(INFO) << "threadFunc(): pid = " << getpid()
             << ", tid = " << reactor::tid();
-  
+
   reactor::net::EventLoop loop;
   loop.loop();
 }

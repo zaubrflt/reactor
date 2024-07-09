@@ -23,7 +23,7 @@ Timestamp Poller::poll(int timeoutMs, ChannelList *activeChannels)
 {
   // Poller的核心功能, 调用poll获得当前活动的IO事件, 然后填充调用方传入的
   // activeChannels, 并返回poll return的时刻.
-  int numEvents = ::poll(&*pollfds_.begin(), pollfds_.size(), timeoutMs);
+  int numEvents = ::poll(pollfds_.data(), pollfds_.size(), timeoutMs);
   Timestamp now = Clock::now();
   if (numEvents > 0) {
     LOG(INFO) << numEvents << " events happended";

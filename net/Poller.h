@@ -18,7 +18,7 @@ class Channel;
 class EventLoop;
 
 // Poller是IO multiplexing的封装. Poller是EventLoop的间接成员,
-// 只供其owner EventLoop在IO线程调用, 因此无需枷锁. 其生命期与
+// 只供其owner EventLoop在IO线程调用, 因此无需加锁. 其生命期与
 // EventLoop相等. Poller并不拥有Channel, Channel在析构之前必须
 // 自己unregister(EventLoop::removeChannel()), 避免悬空指针.
 class Poller : public noncopyable {
