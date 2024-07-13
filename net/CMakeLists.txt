@@ -4,6 +4,10 @@ set(net_SRCS
   Poller.cc
   TimerQueue.cc
   EventLoopThread.cc
+  SocketOps.cc
+  Socket.cc
+  InetAddress.cc
+  Acceptor.cc
 )
 
 set(HEADERS
@@ -14,6 +18,10 @@ set(HEADERS
   TimerQueue.h
   Callbacks.h
   EventLoopThread.h
+  SocketOps.h
+  Socket.h
+  InetAddress.h
+  Acceptor.h
 )
 
 add_library(reactor_net ${net_SRCS})
