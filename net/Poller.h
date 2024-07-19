@@ -36,6 +36,9 @@ public:
   // 更新和维护pollfds_数组
   void updateChannel(Channel* channel);
 
+  // 一定要在loop thread中调用
+  void removeChannel(Channel* channel);
+
   void assertInLoopThread();
 
 private:

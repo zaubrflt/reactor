@@ -2,7 +2,9 @@
 #include "net/EventLoop.h"
 
 #include <glog/logging.h>
+
 #include <poll.h>
+#include <assert.h>
 
 namespace reactor {
 
@@ -18,12 +20,22 @@ Channel::Channel(EventLoop* loop, int fd)
 {
 }
 
+Channel::~Channel()
+{
+  assert(!eventHandling_);
+}
+
 void Channel::handleEvent()
 {
+  eventHandling_ = true;
   if (revents_ & POLLNVAL) {
     LOG(WARNING) << "Channel::handle_event() POLLNVAL";
   }
 
+  if ((revents_ && POLLHUP) && !(revents_ & POLLIN)) {
+    LOG(WARNING) << "Channel::handle_event() POLLHUP";
+    if (closeCallback_) closeCallback_();
+  }
   if (revents_ & (POLLERR | POLLNVAL)) {
     if (errorCallback_) errorCallback_();
   }

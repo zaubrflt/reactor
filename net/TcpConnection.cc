@@ -2,6 +2,8 @@
 #include "net/Channel.h"
 #include "net/Socket.h"
 #include "net/EventLoop.h"
+#include "net/SocketOps.h"
+#include "base/ErrorCode.h"
 
 #include <glog/logging.h>
 
@@ -48,8 +50,40 @@ void TcpConnection::handleRead()
 {
   char buf[66536];
   ssize_t n = ::read(channel_->fd(), buf, sizeof(buf));
-  messageCallback_(shared_from_this(), buf, n);
-  // FIXME: close connection if n == 0
+  if (n > 0) {
+    messageCallback_(shared_from_this(), buf, n);
+  } else if (n == 0) {
+    handleClose();
+  } else {
+    handleError();
+  }
+}
+
+void TcpConnection::handleClose()
+{
+  loop_->assertInLoopThread();
+  LOG(INFO) << "TcpConnection::handleClose state = " << state_;
+  assert(state_ == kConnected);
+  channel_->disableAll();
+  closeCallback_(shared_from_this());
+}
+
+void TcpConnection::handleError()
+{
+  int err = sockets::getSocketError(channel_->fd());
+  LOG(ERROR) << "TcpConnection::handleError [" << name_
+             << "] - SO_ERROR = " << errorStr(err);
+}
+
+void TcpConnection::connectDestroyed()
+{
+  loop_->assertInLoopThread();
+  assert(state_ == kConnected);
+  setState(kDisconnected);
+  channel_->disableAll();
+  connectionCallback_(shared_from_this());
+
+  loop_->removeChannel(channel_.get());
 }
 
 }  // namespace net

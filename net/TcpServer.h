@@ -43,6 +43,8 @@ private:
   // 不是线程安全的
   void newConnection(int sockfd, const InetAddress& peerAddr);
 
+  void removeConnection(const TcpConnectionPtr& conn);
+
   typedef std::map<std::string, TcpConnectionPtr> ConnectionMap;
 
   // for acceptor

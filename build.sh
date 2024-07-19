@@ -16,4 +16,4 @@ mkdir -p $BUILD_DIR \
            -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
            $SOURCE_DIR \
-  && make $*
+  && make -j$(nproc)

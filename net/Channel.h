@@ -23,6 +23,8 @@ public:
 
   Channel(EventLoop* loop, int fd);
 
+  ~Channel();
+
   // Channel的核心, 由EventLoop::loop()调用, 功能是
   // 根据revents_的值分别调用不同的用户回调.
   void handleEvent();
@@ -36,6 +38,9 @@ public:
   void setErrorCallback(const EventCallback& cb)
   { errorCallback_ = std::move(cb); }
 
+  void setCloseCallback(const EventCallback& cb)
+  { closeCallback_ = std::move(cb); }
+
   int fd() const { return fd_; }
 
   int events() const { return events_; }
@@ -47,6 +52,12 @@ public:
   void enableReading()
   {
     events_ |= kReadEvent;
+    update();
+  }
+
+  void disableAll()
+  {
+    events_ = kNoneEvent;
     update();
   }
 
@@ -83,6 +94,10 @@ private:
   EventCallback writeCallback_;
 
   EventCallback errorCallback_;
+
+  EventCallback closeCallback_;
+
+  bool eventHandling_ = true;
 };
 
 }  // namespace net

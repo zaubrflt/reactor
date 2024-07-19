@@ -32,13 +32,20 @@ public:
 
   ~TcpConnection();
 
-  void setConnectionCallback(ConnectionCallback& cb)
+  void setConnectionCallback(const ConnectionCallback& cb)
   { connectionCallback_ = std::move(cb); }
 
-  void setMessageCallback(MessageCallback& cb)
+  void setMessageCallback(const MessageCallback& cb)
   { messageCallback_ = std::move(cb); }
 
+  // 仅内部使用
+  void setCloseCallback(const CloseCallback& cb)
+  { closeCallback_ = std::move(cb); }
+
+  // 当TcpServer接受一个新连接的时候被调用， 应该只被调用一次
   void connectEstablished();
+
+  void connectDestroyed();
 
   bool connected() const { return state_ == kConnected; }
 
@@ -47,11 +54,17 @@ public:
   InetAddress peerAddress() {return peerAddr_; }
 
 private:
-  enum StateE { kConnecting, kConnected, };
+  enum StateE { kConnecting, kConnected, kDisconnected };
 
   void setState(StateE s) { state_ = s; }
 
   void handleRead();
+
+  void handleWrite();
+
+  void handleClose();
+
+  void handleError();
 
   EventLoop* loop_{nullptr};
 
@@ -71,6 +84,7 @@ private:
 
   MessageCallback messageCallback_;
 
+  CloseCallback closeCallback_;
 };
 
 }  // namespace net
