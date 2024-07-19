@@ -27,7 +27,7 @@ public:
   void setNewConnectionCallback(const NewConnectionCallback& cb)
   { newConnectionCallback_ = std::move(cb); }
 
-  bool listenning() const { return listenning_; }
+  bool listening() const { return listening_; }
 
   void listen();
 
@@ -38,13 +38,13 @@ private:
 
   Socket acceptSocket_;
 
-  // 用于观察acceptSocket_上的readable事件, 并调用回调函数Accptor::handleRead(),
+  // 用于观察acceptSocket_上的readable事件, 并调用回调函数Acceptor::handleRead(),
   // 后者会调用accept()来接受新连接, 并调用用户callback.
   Channel acceptChannel_;
 
   NewConnectionCallback newConnectionCallback_;
 
-  bool listenning_{false};
+  bool listening_{false};
 
 };
 

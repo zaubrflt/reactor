@@ -8,6 +8,8 @@ set(net_SRCS
   Socket.cc
   InetAddress.cc
   Acceptor.cc
+  TcpServer.cc
+  TcpConnection.cc
 )
 
 set(HEADERS
@@ -22,6 +24,8 @@ set(HEADERS
   Socket.h
   InetAddress.h
   Acceptor.h
+  TcpServer.h
+  TcpConnection.h
 )
 
 add_library(reactor_net ${net_SRCS})

@@ -2,8 +2,24 @@
 #define REACTOR_NET_CALLBACKS_H
 
 #include <functional>
+#include <memory>
+#include <sys/types.h>
 
 namespace reactor {
+
+namespace net {
+
+class TcpConnection;
+
+typedef std::shared_ptr<TcpConnection> TcpConnectionPtr;
+
+typedef std::function<void (const TcpConnectionPtr&)> ConnectionCallback;
+
+typedef std::function<void (const TcpConnectionPtr&,
+                            const char* data,
+                            ssize_t len)> MessageCallback;
+
+}  // namespace net
 
 typedef std::function<void()> TimerCallback;
 

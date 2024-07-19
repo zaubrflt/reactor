@@ -86,7 +86,7 @@ int accept(int sockfd, struct sockaddr_in* addr)
 #endif
   if (connfd < 0) {
     int savedErrno = errno;
-    LOG(FATAL) << "accept error: " << errorStr(errno);
+    LOG(ERROR) << "accept error: " << errorStr(errno);
     switch (savedErrno)
     {
       case EAGAIN:
@@ -121,7 +121,7 @@ int accept(int sockfd, struct sockaddr_in* addr)
 void close(int sockfd)
 {
   if (::close(sockfd) < 0) {
-    LOG(FATAL) << "close error: " << errorStr(errno);
+    LOG(ERROR) << "close error: " << errorStr(errno);
   }
 }
 
@@ -140,8 +140,19 @@ void fromHostPort(const char* ip, uint16_t port,
   addr->sin_family = AF_INET;
   addr->sin_port = hostToNetwork16(port);
   if (::inet_pton(AF_INET, ip, &addr->sin_addr) <= 0) {
-    LOG(FATAL) << "fromHostPort error: " << errorStr(errno);
+    LOG(ERROR) << "fromHostPort error: " << errorStr(errno);
   }
+}
+
+struct sockaddr_in getLocalAddr(int sockfd)
+{
+  struct sockaddr_in localaddr;
+  bzero(&localaddr, sizeof localaddr);
+  socklen_t addrlen = sizeof(localaddr);
+  if (::getsockname(sockfd, sockaddr_cast(&localaddr), &addrlen) < 0) {
+    LOG(ERROR) << "getLocalAddr error: " << errorStr(errno);
+  }
+  return localaddr;
 }
 
 }  // namespace sockets
